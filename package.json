@@ -1,0 +1,22 @@
+{
+  "name": "knit-works",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BordenJardine/knit-works.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BordenJardine/knit-works/issues"
+  },
+  "homepage": "https://github.com/BordenJardine/knit-works#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
