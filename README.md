@@ -1,5 +1,5 @@
 # knit-works
-A project by Matthew Borden Jardine and Olivia Ruiz-Knott.
+A project by Matthew Borden Jardine and Olivia Heather Ramharacksing Ruiz-Knott.
 
 ## To start
 
