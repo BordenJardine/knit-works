@@ -1,15 +1,19 @@
 WebSocket = require('ws')
 
+let currentId = null
+
 exports.startWebSockets = function(server) {
   const wss = new WebSocket.Server({ server })
 
   wss.on('connection', ws => {
     ws.on('message', message => {
       console.log('received: %s', message)
+      currentId = message
+      sendCurrentId(wss)
     })
     ws.send('web socket connection started')
   })
-  startIntervalTest(wss)
+  // startIntervalTest(wss)
 }
 
 // sends a useless message to all connected clients
@@ -24,5 +28,12 @@ function sendIntervalMessage(wss, i) {
   wss.clients.forEach(client => {
     if (client.readyState != WebSocket.OPEN) return
     client.send(`message #${i}: see you in 5000 milliseconds`)
+  })
+}
+
+function sendCurrentId(wss) {
+  wss.clients.forEach(client => {
+    if (client.readyState != WebSocket.OPEN) return
+    client.send(currentId)
   })
 }
