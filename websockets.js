@@ -8,7 +8,6 @@ exports.startWebSockets = function(server) {
   wss.on('connection', ws => {
     ws.on('message', message => {
       console.log('received: %s', message)
-      checkId(message)
       currentId = message
       sendCurrentId(wss)
     })
@@ -30,10 +29,6 @@ function sendIntervalMessage(wss, i) {
     if (client.readyState != WebSocket.OPEN) return
     client.send(`message #${i}: see you in 5000 milliseconds`)
   })
-}
-
-function checkId(id) {
-  console.log(id==currentId ? "NO" : "YES")
 }
 
 function sendCurrentId(wss) {
