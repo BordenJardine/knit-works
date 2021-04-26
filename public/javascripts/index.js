@@ -1,9 +1,7 @@
-let id = null
-let currentId = null
+let currentName = null
+let myName = null
 
 function load() {
-  console.log('hello world')
-  id = Date.now();
   button = document.querySelector('button')
   ws = startWebSockets()
   button.addEventListener('click', () => onClick(ws))
@@ -17,23 +15,29 @@ function startWebSockets() {
 }
 
 function onMessage(e) {
-  if (parseInt(e.data)) {
-    currentId = e.data
-    console.log(`currentId set: ${currentId}`)
-    disableIfCurrent()
-  } else {
-    console.debug("WebSocket message received:", e)
+  const data = JSON.parse(e.data)
+  switch (data.type) {
+    case'init':
+      myName = data.name
+      document.querySelector('#urName').innerHTML = `, ${myName}`
+      break
+    case 'click':
+      currentName = data.name
+      document.querySelector('#clicker').innerHTML = ` ${currentName}`
+      disableIfCurrent()
+      break
+    default:
+      console.debug("WebSocket message received:", e)
   }
 }
 
 function onClick(ws) {
-  console.log('sending socket message')
-  ws.send(id)
+  ws.send('click!')
 }
 
 function disableIfCurrent() {
   button = document.querySelector('button')
-  button.disabled = id == currentId
+  button.disabled = myName == currentName
 }
 
 window.addEventListener('load', load)

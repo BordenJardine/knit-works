@@ -1,24 +1,29 @@
 WebSocket = require('ws')
+const session = require('./session.js')
 
-let currentId = null
+// name of the user who most recently clicked the button
+let currentClicker = null
 
 exports.startWebSockets = function(server) {
   const wss = new WebSocket.Server({ server })
 
-  wss.on('connection', ws => {
+  wss.on('connection', (ws, req, client) => {
+    const userSession = session.findByCookie(req.headers.cookie)
     ws.on('message', message => {
       console.log('received: %s', message)
-      currentId = message
-      sendCurrentId(wss)
+      // the user clicked the button!
+      currentClicker = userSession.name
+      sendCurrentClicker(wss)
     })
-    ws.send('web socket connection started')
+    // tell the user their name
+    ws.send(JSON.stringify({ type: 'init', name: userSession.name }))
   })
-  // startIntervalTest(wss)
+  //startUpdatingClients(wss)
 }
 
-// sends a useless message to all connected clients
+// tell the clients who is currently connected
 // every 5 seconds
-function startIntervalTest(wss) {
+function startUpdatingClients(wss) {
   let i = 0
   let interval = 5000
   setInterval(() => sendIntervalMessage(wss, i++), interval)
@@ -31,9 +36,9 @@ function sendIntervalMessage(wss, i) {
   })
 }
 
-function sendCurrentId(wss) {
+function sendCurrentClicker(wss) {
   wss.clients.forEach(client => {
     if (client.readyState != WebSocket.OPEN) return
-    client.send(currentId)
+    client.send(JSON.stringify({type: 'click', name: currentClicker}))
   })
 }

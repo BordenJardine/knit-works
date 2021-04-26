@@ -1,6 +1,6 @@
 const http = require('http')
 const path = require('path')
-//const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser')
 const logger = require('morgan')
 const createError = require('http-errors')
 const express = require('express')
@@ -15,7 +15,7 @@ const port = process.env.PORT || 8080
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-//app.use(cookieParser())
+app.use(cookieParser(require('./session.js').SECRET))
 setupSession(app)
 
 app.use('/login', require('./login.js'))

@@ -10,7 +10,6 @@ router.get('/', function(req, res) {
 //post request means form submission
 router.post('/', function(req, res) {
   const name = req.body.name
-  console.log('post!!', req.session.id, name)
   session.update(req.session.id, { name })
   res.redirect('/')
 })

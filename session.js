@@ -1,14 +1,16 @@
 const session = require('express-session')
+const cookie = require('cookie')
+const cookieParser = require('cookie-parser')
 
 // in-memory session information
 // this belongs in a database eventually
-const sessionStore = {}
+const SESSION_STORE = {}
+const SECRET = 'moonlight4life'
 
 function setup(app) {
-  app.set('trust proxy', 1)
   app.use(
     session({
-      secret: 'moonlight4life',
+      secret: SECRET,
       saveUninitialized: true,
       resave: false,
     })
@@ -19,8 +21,6 @@ function setup(app) {
   // go ask the user for one
   app.use((req, res, next) => {
     const name = find(req.session.id)?.name || ''
-    debugger;
-    console.log('check!!', req.session.id, name)
     if (req.originalUrl != '/login' && name == '') {
       res.redirect('/login')
       return
@@ -32,20 +32,26 @@ function setup(app) {
 // this function is currently silly, but we will probably
 // thank ourselves for abstracting it away
 function find(sessionId) {
-  return sessionStore[sessionId]
+  return SESSION_STORE[sessionId]
 }
 
 // add stuff to the session
 function update(sessionId, newStuff = {}) {
-  const existingStuff = sessionStore[sessionId] || {}
-  sessionStore[sessionId] = { ...existingStuff, ...newStuff }
-  debugger;
+  const existingStuff = SESSION_STORE[sessionId] || {}
+  SESSION_STORE[sessionId] = { ...existingStuff, ...newStuff }
+}
+
+function findByCookie(cookies) {
+  sessionCookie = cookie.parse(cookies)['connect.sid']
+  return find(cookieParser.signedCookie(sessionCookie, SECRET))
 }
 
 // make these functions available to other modules
 module.exports = {
   setup,
   find,
-  update
+  findByCookie,
+  update,
+  SECRET
 }
 
